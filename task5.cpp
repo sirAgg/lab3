@@ -15,10 +15,7 @@ void replace_chars(char * text, char search_char, char new_char)
 
 int main(void)
 {
-    const char cs[] = "Hello There How are you";
-
-    char s[sizeof(cs)];
-    strcpy(s,cs);
+    char s[] = "Hello There How are you";
 
     replace_chars(s, 'e', 'a');
     std::cout << s << std::endl;
