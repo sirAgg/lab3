@@ -14,3 +14,6 @@ add_executable(task4 task4.cpp)
 
 project(task5)
 add_executable(task5 task5.cpp)
+
+project(task6)
+add_executable(task6 task6.cpp)
