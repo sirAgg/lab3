@@ -3,7 +3,86 @@
 #include <string>
 #include <stdio.h>
 
-bool init_database( std::vector<std::string>* names )
+void init_database( std::vector<std::string>* names )
+{
+    names->clear();
+}
+
+void insert_name( std::vector<std::string>* names, std::string& name )
+{
+    (*names).push_back(name);
+}
+
+bool search_name( const std::vector<std::string>* names, std::string& search_name )
+{
+    bool found_name = false;
+    for( auto name : *names )
+    {
+        if( search_name.length() <=  name.length())  
+            if (search_name == name.substr(0,search_name.length()))
+            {
+                std::cout << name << std::endl;
+                found_name = true;
+            }
+    }
+    return found_name;
+}
+
+bool delete_name( std::vector<std::string>* names, std::string& name )
+{
+
+    for (auto it = (*names).cbegin(); it != (*names).cend(); it++) 
+    {
+        if (name == *it)
+        {
+            (*names).erase(it);
+            return true;
+        }
+    }
+    return false;
+}
+
+void print_names( const std::vector<std::string>* names )
+{
+    for (auto name : *names) 
+        std::cout << name << std::endl;
+}
+
+bool save_names( const std::vector<std::string>* names, std::string& filename )
+{
+
+    FILE* file = fopen(filename.c_str(), "w");
+    
+    if(!file)
+        return false;
+
+    for (auto name : *names)
+        fprintf(file, "%s\n",name.c_str() );
+
+    fclose(file);
+    return true;
+}
+
+bool load_names( std::vector<std::string>* names, std::string& filename )
+{
+    
+    FILE* file = fopen(filename.c_str(), "r");
+
+    if(!file)
+    {
+        return false;
+    }
+
+    char s[100];
+    while(fscanf(file,"%s\n", s) != EOF)
+        (*names).push_back(s);
+
+    fclose(file);
+
+    return true;
+}
+
+bool ask_conformation()
 {
     std::cout << "Are you sure? (yes/no)" << std::endl;
     while (true)
@@ -19,102 +98,7 @@ bool init_database( std::vector<std::string>* names )
             std::cout << "Please type 'yes' or 'no'" << std::endl;
         
     }
-    names->clear();
     return true;
-}
-
-void insert_name( std::vector<std::string>* names )
-{
-    while(true)
-    {
-        std::string new_name;
-        std::cout << "Insert name ('q' to quit): ";  
-        std::cin >> new_name;
-        if (new_name == "Q" || new_name == "q")
-            break;
-
-        (*names).push_back(new_name);
-    }
-}
-
-void search_name( const std::vector<std::string>* names )
-{
-    std::string search_name;
-    std::cout << "search: ";
-    std::cin >> search_name;
-
-    for( auto name : *names )
-    {
-        if( search_name.length() <=  name.length())  
-            if (search_name == name.substr(0,search_name.length()))
-                std::cout << name << std::endl;
-    }
-}
-
-void delete_name( std::vector<std::string>* names )
-{
-    std::string name;
-    std::cout << "delete name: ";
-    std::cin >> name;
-
-    for (auto it = (*names).cbegin(); it != (*names).cend(); it++) 
-    {
-        if (name == *it)
-        {
-            (*names).erase(it);
-            return;
-        }
-    }
-    std::cout << "name not found" << std::endl;
-}
-
-void print_names( const std::vector<std::string>* names )
-{
-    for (auto name : *names) 
-        std::cout << name << std::endl;
-}
-
-void save_names( std::vector<std::string>* names )
-{
-    std::string filename;
-
-    std::cout << "Enter filename: ";
-    std::cin >> filename;
-
-    FILE* file = fopen(filename.c_str(), "w");
-
-    for (auto name : *names)
-        fprintf(file, "%s\n",name.c_str() );
-
-    fclose(file);
-}
-
-void load_names( std::vector<std::string>* names )
-{
-    std::string filename;
-    
-    std::cout << "Enter filename: ";
-    std::cin >> filename;
-    
-    FILE* file = fopen(filename.c_str(), "r");
-
-    if(!file)
-    {
-        std::cout << "File does not exist" << std::endl; 
-        return;
-    }
-    
-    if( !init_database( names ) )
-    {
-        fclose(file);
-        return;
-    }
-
-    char s[100];
-    while(fscanf(file,"%s\n", s) != EOF)
-        (*names).push_back(s);
-
-    fclose(file);
 }
 
 void task_6()
@@ -138,14 +122,83 @@ void task_6()
         std::cout << "\n";
         
         switch (input) {
+            // quit
             case 0: return;
-            case 1: init_database(&names); break;
-            case 2: insert_name(&names); break;
-            case 3: search_name(&names); break;
-            case 4: delete_name(&names); break;
+
+            // init database       
+            case 1: {
+                        std::cout << "Clear all data." << std::endl;
+                        if(!ask_conformation())
+                            break;
+                        init_database(&names);
+                    } break;
+
+            // inset names
+            case 2: 
+                while(true)
+                {
+                    std::string new_name;
+                    std::cout << "Insert name ('q' to quit): ";  
+                    std::cin >> new_name;
+                    if (new_name == "Q" || new_name == "q")
+                        break;
+                    insert_name(&names, new_name);
+                }
+                break;
+
+            //  search name
+            case 3: {
+                    std::string s_name;
+                    std::cout << "search: ";
+                    std::cin >> s_name;
+                    if(!search_name(&names, s_name))
+                        std::cout << "No matching names." << std::endl;
+                    } break;
+
+            // delete name
+            case 4: {
+                        std::string d_name;
+                        std::cout << "delete name: ";
+                        std::cin >> d_name;
+                        if(delete_name(&names, d_name))
+                            std::cout << "Named removed" << std::endl;
+                        else
+                            std::cout << "Name not found." << std::endl;
+                    } break;
+
+            // print names
             case 5: print_names(&names); break;
-            case 6: save_names(&names); break;
-            case 7: load_names(&names); break;
+
+            // save to file
+            case 6: {
+                        std::string filename;
+
+                        std::cout << "Enter filename: ";
+                        std::cin >> filename;
+
+                        if(save_names(&names, filename))
+                            std::cout << "File saved" << std::endl;
+                        else
+                            std::cout << "Could not save file" << std::endl;
+                    } break;
+
+            // load form file
+            case 7: {
+                        std::cout << "Loading a file will override the current data." << std::endl;
+                        if(!ask_conformation())
+                            break;
+
+                        init_database(&names);
+                        
+                        std::string filename;
+                        std::cout << "Enter filename: ";
+                        std::cin >> filename;
+
+                        if(load_names(&names, filename))
+                            std::cout << "File loaded." << std::endl;
+                        else
+                            std::cout << "File does not exists." << std::endl;
+                    } break;
 
             default:
                     std::cout << "Not a valid option" << std::endl;
