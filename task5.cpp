@@ -15,8 +15,9 @@ void replace_chars(char * text, char search_char, char new_char)
 
 int main(void)
 {
-    char s[] = "Hello There How are you";
+    char s[] = "Hello There, How are you";
 
+	std::cout << s << std::endl;
     replace_chars(s, 'e', 'a');
     std::cout << s << std::endl;
     
