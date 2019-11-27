@@ -1,0 +1,14 @@
+What did I learn?
+    I learnt a little about fileio the c way.
+
+What was difficult?
+    I didn't find anything particulary difficult.
+
+How can the lab be improved?
+    Move some things from lab2 to lab3 beacuse 
+    lab2 had to much and a lot of new things that
+    we didn't cover in the lectures. On the other
+    hand half of lab3 was copy and modify things from
+    lab2 and the other half was short and easy.
+
+I spent about 3-5 hours on this lab.
